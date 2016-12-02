@@ -1,6 +1,6 @@
 <template>
   <div class="hello">
-    <date-picker></date-picker>
+    <date-picker :minDate="minDate" :maxDate="maxDate" :value="value"></date-picker>
   </div>
 </template>
 
@@ -15,7 +15,9 @@ export default {
   },
   data () {
     return ({
-      month: moment()
+      value: moment('2016-10-30'),
+      minDate: moment('2016-10-20'),
+      maxDate: moment('2017-01-20')
     })
   }
 }

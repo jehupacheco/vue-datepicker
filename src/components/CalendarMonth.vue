@@ -1,11 +1,11 @@
 <template>
-  <div class="CalendarMonth CalendarMonth--horizontal">
+  <div class="CalendarMonth">
     <table>
-      <caption class="CalendarMonth__caption js-CalendarMonth__caption">
+      <caption class="CalendarMonth__caption">
         <strong>{{ monthTitle }}</strong>
       </caption>
 
-      <tbody class="CalendarMonth__grid">
+      <tbody>
         <tr v-for="(week, i) in weeks" :key="i">
           <td v-for="(day, j) in week" :class="getDayClass(day)" :key="j" @click.stop="onDateChange(day)">
             <div class="CalendarDay">
@@ -38,6 +38,9 @@ export default {
     month: {
       default: moment()
     },
+    selected: {
+      default: moment()
+    },
     monthFormat: {
       type: String,
       default: 'MMMM YYYY'
@@ -62,13 +65,9 @@ export default {
   methods: {
     getDayClass (day) {
       const outsideClass = (!day || day.month() !== this.month.month()) ? 'CalendarMonth__day--outside' : ''
-      return `CalendarMonth__day ${outsideClass}`
-    },
-    log () {
-      console.log('calendar')
-      for (var i = arguments.length - 1; i >= 0; i--) {
-        console.log(arguments[i])
-      }
+      const outOfRangeClass = !day ? '' : ((day.isBefore(this.minDate, 'day') || day.isAfter(this.maxDate, 'day')) ? 'CalendarMonth__day--blocked-out-of-range' : '')
+      const selected = (!day || !day.isSame(this.selected, 'day') ? '' : 'CalendarMonth__day--selected-start')
+      return `CalendarMonth__day ${outsideClass} ${outOfRangeClass} ${selected}`
     }
   }
 }
@@ -79,15 +78,14 @@ export default {
     text-align: center;
     padding: 0 13px;
     vertical-align: top;
-}
-.CalendarMonth table {
-    border-collapse: collapse;
-    border-spacing: 0;
-}
-.CalendarMonth--horizontal {
     display: inline-block;
     min-height: 100%;
     padding-bottom: 20px;
+}
+
+.CalendarMonth table {
+    border-collapse: collapse;
+    border-spacing: 0;
 }
 
 .CalendarMonth__caption {
@@ -98,6 +96,7 @@ export default {
     text-align: center;
     margin-bottom: 10px;
 }
+
 .CalendarMonth__day {
     border: 1px solid #e4e7e7;
     padding: 0;
@@ -107,74 +106,54 @@ export default {
     width: 39px;
     height: 38px;
 }
+
 .CalendarMonth__day:active,
 .CalendarMonth__day:hover
 {
-    background: #f2f2f2;
+    background: #e4e7e7;
+    border: 1px double #d4d9d9;
 }
+
 .CalendarMonth__day--outside {
     border: 0;
     cursor: default;
 }
+
+.CalendarMonth__day--outside:hover{
+    background-color: white;
+    border: 0;
+}
+
+.CalendarMonth__day--blocked-out-of-range:hover {
+    background-color: white;
+}
+
 .CalendarMonth__day--outside:active {
     background: #fff;
 }
-.CalendarMonth__day--hovered {
-    background: #e4e7e7;
-    border: 1px double #d4d9d9;
-    color: inherit;
-}
-.CalendarMonth__day--blocked-minimum-nights {
-    color: #cacccd;
-    background: #fff;
-    border: 1px solid #e4e7e7;
-    cursor: default;
-}
-.CalendarMonth__day--blocked-minimum-nights:active {
-    background: #fff;
-}
-.CalendarMonth__day--selected-span {
-    background: #66e2da;
-    border: 1px double #33dacd;
-    color: #fff;
-}
-.CalendarMonth__day--selected-span.CalendarMonth__day--hovered, .CalendarMonth__day--selected-span:active {
-    background: #33dacd;
-    border: 1px double #00a699;
-}
-.CalendarMonth__day--selected-span.CalendarMonth__day--last-in-range {
-    border-right: #00a699;
-}
-.CalendarMonth__day--hovered-span, .CalendarMonth__day--after-hovered-start {
-    background: #b2f1ec;
-    border: 1px double #80e8e0;
-    color: #007a87;
-}
-.CalendarMonth__day--selected-start, .CalendarMonth__day--selected-end, .CalendarMonth__day--selected {
+
+
+.CalendarMonth__day--selected-start {
     background: #00a699;
     border: 1px double #00a699;
     color: #fff;
 }
-.CalendarMonth__day--selected-start:active, .CalendarMonth__day--selected-end:active, .CalendarMonth__day--selected:active {
+.CalendarMonth__day--selected-start:active,
+.CalendarMonth__day--selected-start:hover {
     background: #00a699;
 }
-.CalendarMonth__day--blocked-calendar {
-    background: #cacccd;
-    color: #82888a;
-    cursor: default;
-}
-.CalendarMonth__day--blocked-calendar:active {
-    background: #cacccd;
-}
+
 .CalendarMonth__day--blocked-out-of-range {
     color: #cacccd;
     background: #fff;
     border: 1px solid #e4e7e7;
-    cursor: default;
+    cursor: not-allowed;
 }
+
 .CalendarMonth__day--blocked-out-of-range:active {
     background: #fff;
 }
+
 .CalendarDay {
   position: relative;
   display: table;
