@@ -5,10 +5,14 @@
         <strong>{{ monthTitle }}</strong>
       </caption>
 
-      <tbody class="js-CalendarMonth__grid">
+      <tbody class="CalendarMonth__grid">
         <tr v-for="(week, i) in weeks" :key="i">
-          <td v-for="(day, j) in week" :class="getDayClass(day)" :key="j">
-            <daycalendar v-if="day" :day="day"></daycalendar>
+          <td v-for="(day, j) in week" :class="getDayClass(day)" :key="j" @click.stop="onDateChange(day)">
+            <div class="CalendarDay">
+              <span class="" v-if="day">
+                {{ day.date() }}
+              </span>
+            </div>
           </td>
         </tr>
       </tbody>
@@ -18,14 +22,10 @@
 
 <script>
 import moment from 'moment'
-import DayCalendar from './DayCalendar'
 import getCalendarMonthWeeks from '../utils/getCalendarMonthWeeks'
 
 export default {
-  name: 'calendarmonth',
-  components: {
-    'daycalendar': DayCalendar
-  },
+  name: 'calendar-month',
   computed: {
     monthTitle () {
       return this.month.format(this.monthFormat)
@@ -41,12 +41,34 @@ export default {
     monthFormat: {
       type: String,
       default: 'MMMM YYYY'
+    },
+    onDateChange: {
+      type: Function,
+      default () {
+        return function () {}
+      }
+    },
+    minDate: {
+      default () {
+        return moment().subtract('years', 100)
+      }
+    },
+    maxDate: {
+      default () {
+        return moment().add('years', 100)
+      }
     }
   },
   methods: {
     getDayClass (day) {
       const outsideClass = (!day || day.month() !== this.month.month()) ? 'CalendarMonth__day--outside' : ''
       return `CalendarMonth__day ${outsideClass}`
+    },
+    log () {
+      console.log('calendar')
+      for (var i = arguments.length - 1; i >= 0; i--) {
+        console.log(arguments[i])
+      }
     }
   }
 }
@@ -64,7 +86,9 @@ export default {
 }
 .CalendarMonth--horizontal {
     display: inline-block;
-    min-height: 100%}
+    min-height: 100%;
+    padding-bottom: 20px;
+}
 
 .CalendarMonth__caption {
     color: #3c3f40;
@@ -72,7 +96,7 @@ export default {
     font-size: 18px;
     padding: 15px 0 35px;
     text-align: center;
-    margin-bottom: 2px;
+    margin-bottom: 10px;
 }
 .CalendarMonth__day {
     border: 1px solid #e4e7e7;
@@ -83,7 +107,9 @@ export default {
     width: 39px;
     height: 38px;
 }
-.CalendarMonth__day:active {
+.CalendarMonth__day:active,
+.CalendarMonth__day:hover
+{
     background: #f2f2f2;
 }
 .CalendarMonth__day--outside {
@@ -148,5 +174,25 @@ export default {
 }
 .CalendarMonth__day--blocked-out-of-range:active {
     background: #fff;
+}
+.CalendarDay {
+  position: relative;
+  display: table;
+  height: 100%;
+  width: 100%;
+}
+
+.CalendarDay span {
+  display: table-header-group;
+}
+
+.CalendarDay__day {
+  display: table-cell;
+  vertical-align: middle;
+
+  user-select: none;
+  -moz-user-select: none;
+  -webkit-user-select: none;
+  -ms-user-select: none;
 }
 </style>

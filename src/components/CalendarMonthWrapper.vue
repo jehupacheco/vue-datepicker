@@ -1,8 +1,12 @@
 <template>
   <div class="DayPicker DayPicker--horizontal">
     <div class="DayPickerNavigation DayPickerNavigation--horizontal">
-      <span @click="setPreviousMonth" class="DayPickerNavigation__prev DayPickerNavigation__prev--default"> p </span>
-      <span @click="setNextMonth" class="DayPickerNavigation__next DayPickerNavigation__next--default"> n </span>
+      <span @click.stop="setPreviousMonth" class="DayPickerNavigation__prev DayPickerNavigation__prev--default">
+        <img src="../assets/arrow-left.png">
+      </span>
+      <span @click.stop="setNextMonth" class="DayPickerNavigation__next DayPickerNavigation__next--default">
+        <img src="../assets/arrow-right.png">
+      </span>
     </div>
     <div class="DayPicker__week-headers">
       <div class="DayPicker__week-header">
@@ -13,7 +17,11 @@
         </ul>
       </div>
     </div>
-    <calendarmonth :month="state.month"></calendarmonth>
+    <calendar-month :month="state.month"
+                    :onDateChange="onDateChange"
+                    :minDate="minDate"
+                    :maxDate="maxDate">
+    </calendar-month>
   </div>
 </template>
 
@@ -24,7 +32,7 @@ import moment from 'moment'
 export default {
   name: 'calendar-month-wrapper',
   components: {
-    'calendarmonth': CalendarMonth
+    'calendar-month': CalendarMonth
   },
   props: {
     month: {
@@ -35,6 +43,22 @@ export default {
       default () {
         return ['Su', 'Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa']
       }
+    },
+    onDateChange: {
+      type: Function,
+      default () {
+        return function () {}
+      }
+    },
+    minDate: {
+      default () {
+        return moment().subtract('years', 100)
+      }
+    },
+    maxDate: {
+      default () {
+        return moment().add('years', 100)
+      }
     }
   },
   methods: {
@@ -43,6 +67,15 @@ export default {
     },
     setPreviousMonth () {
       this.state.month = moment(this.state.month.subtract(1, 'months'))
+    },
+    avoid (e) {
+      e.target.value = ''
+    },
+    log () {
+      console.log('wrapper')
+      for (var i = arguments.length - 1; i >= 0; i--) {
+        console.log(arguments[i])
+      }
     }
   },
   data () {
@@ -106,6 +139,7 @@ export default {
     width: 300px;
     left: 50%
 }
+
 .DayPickerNavigation__prev, .DayPickerNavigation__next {
     cursor: pointer;
     line-height: 0.78;
@@ -114,6 +148,12 @@ export default {
     -moz-user-select: none;
     -ms-user-select: none;
 }
+
+.DayPickerNavigation__prev img,
+.DayPickerNavigation__next img {
+  width: 15px;
+}
+
 .DayPickerNavigation__prev--default, .DayPickerNavigation__next--default {
     border: 1px solid #dce0e0;
     background-color: #fff;

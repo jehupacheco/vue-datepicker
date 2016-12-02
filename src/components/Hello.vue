@@ -1,17 +1,17 @@
 <template>
   <div class="hello">
-    <calendar-month-wrapper :month="month"></calendar-month-wrapper>
+    <date-picker></date-picker>
   </div>
 </template>
 
 <script>
-import CalendarMonthWrapper from './CalendarMonthWrapper'
+import DatePicker from './DatePicker'
 import moment from 'moment'
 
 export default {
   name: 'hello',
   components: {
-    'calendar-month-wrapper': CalendarMonthWrapper
+    'date-picker': DatePicker
   },
   data () {
     return ({

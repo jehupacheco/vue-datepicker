@@ -10,10 +10,21 @@
 import moment from 'moment'
 
 export default {
-  name: 'daycalendar',
+  name: 'day-calendar',
   props: {
     day: {
       default: moment()
+    },
+    onDateChange: {
+      type: Function,
+      default () {
+        return function () {}
+      }
+    }
+  },
+  methods: {
+    fireDateChange () {
+      this.$emit('date-change', this.day)
     }
   }
 }
@@ -25,6 +36,10 @@ export default {
   display: table;
   height: 100%;
   width: 100%;
+}
+
+.CalendarDay span {
+  display: table-header-group;
 }
 
 .CalendarDay__day {
