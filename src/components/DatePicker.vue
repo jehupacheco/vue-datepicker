@@ -1,11 +1,11 @@
 <template>
   <div>
-    <div :class="`${inputWrapperClass} InputWrapper ${withCaret}`">
+    <div :class="[inputWrapperClass,'InputWrapper', withCaret]">
       <input type="text"
             :name="name"
             @click.stop="showCalendar"
             :value="state.displayValue"
-            :class="`${inputClass} Input`">
+            :class="[inputClass, 'Input']">
       <calendar-month-wrapper :month="state.date"
                               v-show="displayCalendar"
                               :onDateChange="changeDate"
@@ -69,7 +69,7 @@ export default {
       this.displayCalendar = false
     },
     changeDate (date) {
-      if (date.isBetween(this.minDate, this.maxDate, 'day')) {
+      if (date.isBetween(this.minDate, this.maxDate, 'day', '[]')) {
         this.state.date = moment(date)
         this.state.displayValue = this.state.date.format(this.format)
       }
@@ -116,7 +116,8 @@ export default {
   outline: 0;
 }
 
-.InputWrapper.withCaret::before, .InputWrapper.withCaret::after {
+.InputWrapper.withCaret::before,
+.InputWrapper.withCaret::after {
   content: "";
   display: inline-block;
   position: absolute;
